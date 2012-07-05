@@ -31,14 +31,16 @@ Selects what formatting method to use for pretty printing `table` objects.
  * `simple` - Uses a very terse notation. ie: `table<?>`
  * `names` - Emits a list of tables property names, ie:
  `table<[ attr, attr, attr ]>`
- * `recursive_0` - Attempts to pretty-print the whole table
- ```
- table<{
- 	foo = bar
+ * `recursive_0` - Attempts to pretty-print the whole table:
+
+```
+table<{
+	foo = bar
 	quux = doo
- }>
- ```
- The value on the right hand side of this equation is governed by `pp_table_leaf`
+}>
+```
+
+The value on the right hand side of this equation is governed by `pp_table_leaf`
 
 
 `pp_table_leaf`
