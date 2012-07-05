@@ -2,94 +2,96 @@ Usage
 =======
 
 Firstly, set up your new package:
-
-	local sys = {
-		os = os
-		io = io
-	}
-
+```lua
+local sys = {
+	os = os
+	io = io
+}
+```
 Load the `dispatch_generator`
+```lua
+require "kutils.dispatch_generator"
 
-	require "kutils.dispatch_generator"
-
-	local kutils = kutils
+local kutils = kutils
+```
 
 Open your module namespace
-
-	module("Example")
-
+```lua
+module("Example")
+```
 And initialize the dispatch engine.
-
-	kutils.dispatch_generator.init( _M )
-
+```lua
+kutils.dispatch_generator.init( _M )
+```
 Then its just a matter of setting up the dispatch table.
+```lua
+_add_dispatch("quux", "noop", function()
+	-- A dead function that would be run
+	-- but instead, does nothing
+end)
 
-	_add_dispatch("quux", "noop", function()
-		-- A dead function that would be run
-		-- but instead, does nothing
-	end)
-
-	_add_dispatch("quux", "printer", function()
-		sys.io.write("Called quux\n");
-	end)
-
+_add_dispatch("quux", "printer", function()
+	sys.io.write("Called quux\n");
+end)
+```
 And then using it:
-
-	quux() # does nothing.
-	_set_default("quux", "printer")
-	quux() # prints the message
-
+```lua
+quux()  --  does nothing.
+_set_default("quux", "printer")
+quux() -- prints the message
+```
 
 Method Documentation
 ====
 
 `init`
 ----
-
-	kutils.dispatch_generator.init( yourtable )
-
+```lua
+kutils.dispatch_generator.init( yourtable )
+```
 Initialises the table `table` and sets up all the functions to augment it further.
 
 `yourtable._dispatcher`
 ----
-
-	func = yourtable._dispatcher( method_name, dispatch_name )
-	-- or just _dispatcher(  ... ) if in module('yourtable')
-	func( args )
-
+```lua
+func = yourtable._dispatcher( method_name, dispatch_name )
+-- or just _dispatcher(  ... ) if in module('yourtable')
+func( args )
+```
 Resolves the function named `method_name` and returns the `dispatch_name` variety, if it exists.
 
 
 `yourtable._add_dispatch`
 ----
-	
-	yourtable._add_dispatch( method_name, dispatch_name, function_ref )
-	-- also just _add_dispatch( ... )
+```lua	
+yourtable._add_dispatch( method_name, dispatch_name, function_ref )
+-- also just _add_dispatch( ... )
 
-	_add_dispatch( "foo" , "basic", function( arg, argb )
-		-- function body
-	end)
-
+_add_dispatch( "foo" , "basic", function( arg, argb )
+	-- function body
+end)
+```
 Create the dispatch variety `dispatch_name` for function `method_name`.
 
 If this is the first such `method_name`, this is set as the default one, and the dispatching method `yourtable[method_name]` is also created, and immediately becomes callable.
 
 `yourtable._set_default`
 ----
-	yourtable._set_default( method_name, dispatch_name )
+```lua
+yourtable._set_default( method_name, dispatch_name )
 	-- or just _set_default( ... )
-
+```
 This sets the default delegated dispatch for `method_name` to `dispatch_name` 
 
 
 `yourtable._lexical`
 ----
-
-	yourtable._lexical({ meth = "dispatch",	meth_b = "dispatch" }, function()
-		meth() -- calls the "dispatch" variety of meth
-		meth_b() -- calls the "dispatch" variety of meth_b
-	end)
-
+```lua
+yourtable._lexical({ meth = "dispatch",	meth_b = "dispatch" }, function()
+	meth() -- calls the "dispatch" variety of meth
+	meth_b() -- calls the "dispatch" variety of meth_b
+end)
+```
 Temporarily sets all the methods default dispatch for the ones listed to the ones listed.
 
 Hopefully you'll never need this, as its somewhat fragile by design, but handy for some applications where you'd otherwise have to manually set values and then unset them again.
